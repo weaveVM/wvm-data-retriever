@@ -2,6 +2,13 @@
 name = "wvm-data-retriever"
 version = "0.1.0"
 edition = "2021"
+description = "wvm:// data retrieval protocol"
+authors = ["charmful0x <rani@decent.land>"]
+license = "MIT"
+repository = "https://github.com/weavevm/wvm-data-retriever"
+readme = "README.md"
+documentation = "https://docs.wvm.dev"
+keywords = ["wvm", "wvm://", "arweave"]
 
 [dependencies]
 anyhow = "1.0.86"

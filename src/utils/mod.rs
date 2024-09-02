@@ -1,3 +1,4 @@
+pub mod arweave;
 pub mod arweave_gql;
 pub mod constants;
 pub mod schemas;

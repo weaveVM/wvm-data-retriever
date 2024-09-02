@@ -5,7 +5,7 @@
 </p>
 
 ## About
-WeaveVM Data Retriever (`wvm://`) is a WeaveVM data retrieving protocol. It mainly use WeaveVM DA layer and Arweave permanent storage both access to retrieve a WeaveVM transaction data. 
+WeaveVM Data Retriever (`wvm://`) is a protocol for retrieving data from WeaveVM network. It leverages the WeaveVM DA layer and Arweave's permanent storage to access and retrieve WeaveVM transaction data through both networks.
 
 ## Build & Run
 
@@ -22,7 +22,7 @@ cargo shuttle run
 ### Retrieve calldata associated with an WeaveVM TXID
 
 ```bash
-curl -X GET https://https://wvm-data-retriever.shuttleapp.rs/calldata/$WVM_TXID
+curl -X GET https://wvm-data-retriever.shuttleapp.rs/calldata/$WVM_TXID
 ```
 
 Returns

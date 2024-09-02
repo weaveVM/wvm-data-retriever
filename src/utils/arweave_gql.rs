@@ -63,6 +63,5 @@ pub async fn retrieve_block_from_arweave(block_id: u32) -> String {
         .and_then(|id| id.as_str())
         .unwrap_or("No TXID found");
 
-    println!("ID: {}", id);
     id.into()
 }

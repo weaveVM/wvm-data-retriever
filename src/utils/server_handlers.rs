@@ -1,6 +1,6 @@
 use crate::utils::arweave::get_tx_calldata_from_arweave;
 use crate::utils::arweave_gql::retrieve_block_from_arweave;
-use crate::utils::schemas::{EncodingUtils, HandlerGetCalldata};
+use crate::utils::schemas::HandlerGetCalldata;
 use crate::utils::wvm_client::retrieve_wvm_block_ref_from_txid;
 use axum::{extract::Path, response::Json};
 use serde_json::Value;

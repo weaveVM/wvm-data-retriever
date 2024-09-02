@@ -1,11 +1,11 @@
 use anyhow::Error;
-use reqwest::{Client, Response};
+use reqwest::Client;
 use serde_json::Value;
 
 use crate::utils::constants::IRYS_GQL_GATEWAY;
 
 async fn send_graphql(gateway: &str, query: Value) -> Result<Value, Error> {
-    let client = reqwest::Client::new();
+    let client = Client::new();
 
     let res = client
         .post(format!("{}/{}", gateway, "graphql"))

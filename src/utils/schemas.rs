@@ -8,13 +8,34 @@ pub struct EncodingUtils;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct GetBlockFromTx {
-    number: U256,
-    hash: String,
+    pub number: U256,
+    pub hash: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct HandlerGetCalldata {
+    pub calldata: String,
+    pub arweave_block_hash: String,
+    pub wvm_block_hash: String,
 }
 
 impl GetBlockFromTx {
     pub fn new(number: U256, hash: String) -> Self {
         GetBlockFromTx { number, hash }
+    }
+}
+
+impl HandlerGetCalldata {
+    pub fn new(
+        calldata: String,
+        arweave_block_hash: String,
+        wvm_block_hash: String,
+    ) -> HandlerGetCalldata {
+        HandlerGetCalldata {
+            calldata,
+            arweave_block_hash,
+            wvm_block_hash,
+        }
     }
 }
 

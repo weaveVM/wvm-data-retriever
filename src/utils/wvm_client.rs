@@ -6,7 +6,7 @@ use ethers_providers::{Http, Provider};
 use serde_json;
 use std::str::FromStr;
 
-pub async fn retrieve_block_ref_from_txid(txid: &str) -> GetBlockFromTx {
+pub async fn retrieve_wvm_block_ref_from_txid(txid: &str) -> GetBlockFromTx {
     let provider: Provider<Http> =
         Provider::<Http>::try_from(WVM_RPC_URL).expect("could not instantiate HTTP Provider");
     let txid = H256::from_str(&txid).unwrap();

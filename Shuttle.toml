@@ -1,0 +1,5 @@
+name = "wvm-archiver"
+
+assets = [
+    ".env"
+]

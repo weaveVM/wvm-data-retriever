@@ -1,4 +1,4 @@
-name = "wvm-archiver"
+name = "wvm-data-retriever"
 
 assets = [
     ".env"

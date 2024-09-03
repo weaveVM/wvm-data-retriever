@@ -51,7 +51,7 @@ Returns
 pub struct HandlerGetCalldata {
     pub calldata: String,
     pub arweave_block_hash: String,
-    pub wvm_block_hash: String
+    pub wvm_block_hash: String,
     pub war_decoded_calldata: String // the decoded JSON representation of `calldata`
 }
 ```

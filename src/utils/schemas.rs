@@ -1,3 +1,4 @@
+use borsh_derive::{BorshDeserialize, BorshSerialize};
 use brotli;
 use ethers::types::U256;
 use serde::{Deserialize, Serialize};
@@ -17,6 +18,7 @@ pub struct HandlerGetCalldata {
     pub calldata: String,
     pub arweave_block_hash: String,
     pub wvm_block_hash: String,
+    pub war_decoded_calldata: Option<String>,
 }
 
 impl GetBlockFromTx {
@@ -30,11 +32,13 @@ impl HandlerGetCalldata {
         calldata: String,
         arweave_block_hash: String,
         wvm_block_hash: String,
+        war_decoded_calldata: Option<String>,
     ) -> HandlerGetCalldata {
         HandlerGetCalldata {
             calldata,
             arweave_block_hash,
             wvm_block_hash,
+            war_decoded_calldata,
         }
     }
 }
@@ -52,6 +56,11 @@ impl EncodingUtils {
 
     pub fn borsh_deserialize(input: Vec<u8>) -> BorshSealedBlockWithSenders {
         let from_borsh: BorshSealedBlockWithSenders = borsh::from_slice(&input).unwrap();
+        from_borsh
+    }
+
+    pub fn wvm_archiver_borsh_deserialize(input: Vec<u8>) -> WeaveVMArchiverBlock {
+        let from_borsh: WeaveVMArchiverBlock = borsh::from_slice(&input).unwrap();
         from_borsh
     }
 }
@@ -81,7 +90,7 @@ pub struct Block {
     pub state_root: Option<String>,               // "stateRoot"
     pub timestamp: Option<String>,                // "timestamp"
     pub total_difficulty: Option<String>,         // "totalDifficulty"
-    pub transactions: Vec<(String, String)>,      // "transactions" as an array of strings
+    pub transactions_and_calldata: Vec<(String, String)>, // "transactions_and_calldata" as an array of (string, string)
 }
 
 impl From<BorshSealedBlockWithSenders> for Block {
@@ -110,10 +119,38 @@ impl From<BorshSealedBlockWithSenders> for Block {
             state_root: Some(sealed_block.state_root.to_string()),
             timestamp: Some(sealed_block.timestamp.to_string()),
             total_difficulty: None,
-            transactions: sealed_block
+            transactions_and_calldata: sealed_block
                 .transactions()
                 .map(|i| (i.hash.to_string(), i.transaction.input().to_string()))
                 .collect::<Vec<(String, String)>>(),
         }
     }
+}
+
+#[derive(Debug, Deserialize, Serialize, BorshSerialize, BorshDeserialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct WeaveVMArchiverBlock {
+    pub base_fee_per_gas: Option<String>,         // "baseFeePerGas"
+    pub blob_gas_used: Option<String>,            // "blobGasUsed"
+    pub difficulty: Option<String>,               // "difficulty"
+    pub excess_blob_gas: Option<String>,          // "excessBlobGas"
+    pub extra_data: Option<String>,               // "extraData"
+    pub gas_limit: Option<String>,                // "gasLimit"
+    pub gas_used: Option<String>,                 // "gasUsed"
+    pub hash: Option<String>,                     // "hash"
+    pub logs_bloom: Option<String>,               // "logsBloom"
+    pub miner: Option<String>,                    // "miner"
+    pub mix_hash: Option<String>,                 // "mixHash"
+    pub nonce: Option<String>,                    // "nonce"
+    pub number: Option<String>,                   // "number"
+    pub parent_beacon_block_root: Option<String>, // "parentBeaconBlockRoot"
+    pub parent_hash: Option<String>,              // "parentHash"
+    pub receipts_root: Option<String>,            // "receiptsRoot"
+    pub seal_fields: Vec<String>,                 // "sealFields" as an array of strings
+    pub sha3_uncles: Option<String>,              // "sha3Uncles"
+    pub size: Option<String>,                     // "size"
+    pub state_root: Option<String>,               // "stateRoot"
+    pub timestamp: Option<String>,                // "timestamp"
+    pub total_difficulty: Option<String>,         // "totalDifficulty"
+    pub transactions: Vec<String>,                // "transactions" as an array of strings
 }

@@ -17,6 +17,10 @@ cd wvm-data-retriever
 cargo shuttle run
 ```
 
+## wvm:// workflow
+
+![](./media/wdar-diagram.png)
+
 ## Server Methods
 
 ### Retrieve calldata associated with an WeaveVM TXID
@@ -32,6 +36,23 @@ pub struct HandlerGetCalldata {
     pub calldata: String,
     pub arweave_block_hash: String,
     pub wvm_block_hash: String,
+    pub war_decoded_calldata: String // default to Some("")
+}
+```
+
+### Retrieve WeaveVM-Archiver JSON decoded calldata
+
+```bash
+curl -X GET https://wvm-data-retriever.shuttleapp.rs/war-calldata/$WVM_TXID
+```
+Returns
+
+```rs
+pub struct HandlerGetCalldata {
+    pub calldata: String,
+    pub arweave_block_hash: String,
+    pub wvm_block_hash: String
+    pub war_decoded_calldata: String // the decoded JSON representation of `calldata`
 }
 ```
 

@@ -1,4 +1,6 @@
-use crate::utils::server_handlers::{handle_get_calldata, handle_weave_gm};
+use crate::utils::server_handlers::{
+    handle_get_calldata, handle_get_war_calldata, handle_weave_gm,
+};
 use axum::{routing::get, Router};
 
 mod utils;
@@ -7,7 +9,8 @@ mod utils;
 async fn main() -> shuttle_axum::ShuttleAxum {
     let router = Router::new()
         .route("/", get(handle_weave_gm))
-        .route("/calldata/:txid", get(handle_get_calldata));
+        .route("/calldata/:txid", get(handle_get_calldata))
+        .route("/war-calldata/:txid", get(handle_get_war_calldata));
 
     Ok(router.into())
 }

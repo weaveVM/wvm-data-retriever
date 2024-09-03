@@ -17,6 +17,10 @@ cd wvm-data-retriever
 cargo shuttle run
 ```
 
+## wvm:// workflow
+
+![](./media/wdar-diagram.png)
+
 ## Server Methods
 
 ### Retrieve calldata associated with an WeaveVM TXID

@@ -11,7 +11,7 @@ pub async fn get_tx_calldata_from_arweave(
     let unbrotli = EncodingUtils::brotli_decompress(data.to_vec());
     let unborsh = EncodingUtils::borsh_deserialize(unbrotli);
     let str_block = Block::from(unborsh);
-    let block_txs = str_block.transactions.to_vec();
+    let block_txs = str_block.transactions_and_calldata.to_vec();
     let wvm_txid = wvm_txid.trim().to_lowercase(); // Normalize txid for comparison
 
     for (hash, calldata) in &block_txs {

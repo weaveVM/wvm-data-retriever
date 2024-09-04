@@ -19,7 +19,7 @@ cargo shuttle run
 
 ## wvm:// workflow
 
-![](./media/wdar-diagram.png)
+![](./media/wvm-protocol.png)
 
 ## Server Methods
 

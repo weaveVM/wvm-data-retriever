@@ -36,7 +36,10 @@ pub struct HandlerGetCalldata {
     pub calldata: String,
     pub arweave_block_hash: String,
     pub wvm_block_hash: String,
-    pub war_decoded_calldata: String // default to Some("")
+    pub war_decoded_calldata: Option<String>, // default to Some("")
+    pub wvm_data_da: bool,
+    pub ar_data_archive: bool,
+    pub da_archive_is_equal_data: bool,
 }
 ```
 
@@ -52,7 +55,10 @@ pub struct HandlerGetCalldata {
     pub calldata: String,
     pub arweave_block_hash: String,
     pub wvm_block_hash: String,
-    pub war_decoded_calldata: String // the decoded JSON representation of `calldata`
+    pub war_decoded_calldata: Option<String>, // the decoded JSON representation of `calldata`
+    pub wvm_data_da: bool,
+    pub ar_data_archive: bool,
+    pub da_archive_is_equal_data: bool,
 }
 ```
 

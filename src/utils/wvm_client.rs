@@ -17,7 +17,8 @@ pub async fn retrieve_wvm_block_ref_from_txid(txid: &str) -> GetBlockFromTx {
     let block_hash: &str = tx_json["blockHash"].as_str().unwrap_or("0x");
     let block_number_hex: &str = tx_json["blockNumber"].as_str().unwrap_or("0x");
     let block_number_dec = U256::from_str(block_number_hex).unwrap_or(U256::zero());
-    let res = GetBlockFromTx::new(block_number_dec, block_hash.into());
+    let calldata: &str = tx_json["input"].as_str().unwrap_or("0x");
+    let res = GetBlockFromTx::new(block_number_dec, block_hash.into(), calldata.into());
 
     res
 }

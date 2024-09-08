@@ -11,6 +11,7 @@ pub struct EncodingUtils;
 pub struct GetBlockFromTx {
     pub number: U256,
     pub hash: String,
+    pub calldata: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -19,11 +20,18 @@ pub struct HandlerGetCalldata {
     pub arweave_block_hash: String,
     pub wvm_block_hash: String,
     pub war_decoded_calldata: Option<String>,
+    pub wvm_data_da: bool,
+    pub ar_data_archive: bool,
+    pub da_archive_is_equal_data: bool,
 }
 
 impl GetBlockFromTx {
-    pub fn new(number: U256, hash: String) -> Self {
-        GetBlockFromTx { number, hash }
+    pub fn new(number: U256, hash: String, calldata: String) -> Self {
+        GetBlockFromTx {
+            number,
+            hash,
+            calldata,
+        }
     }
 }
 
@@ -33,12 +41,18 @@ impl HandlerGetCalldata {
         arweave_block_hash: String,
         wvm_block_hash: String,
         war_decoded_calldata: Option<String>,
+        wvm_data_da: bool,
+        ar_data_archive: bool,
+        da_archive_is_equal_data: bool,
     ) -> HandlerGetCalldata {
         HandlerGetCalldata {
             calldata,
             arweave_block_hash,
             wvm_block_hash,
             war_decoded_calldata,
+            wvm_data_da,
+            ar_data_archive,
+            da_archive_is_equal_data,
         }
     }
 }

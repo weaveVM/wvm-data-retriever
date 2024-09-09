@@ -26,7 +26,7 @@ cargo shuttle run
 ### Retrieve calldata associated with an WeaveVM TXID
 
 ```bash
-curl -X GET https://wvm-data-retriever.shuttleapp.rs/calldata/$WVM_TXID
+curl -X GET https://gateway.wvm.dev/calldata/$WVM_TXID
 ```
 
 Returns
@@ -46,7 +46,7 @@ pub struct HandlerGetCalldata {
 ### Retrieve WeaveVM-Archiver JSON decoded calldata
 
 ```bash
-curl -X GET https://wvm-data-retriever.shuttleapp.rs/war-calldata/$WVM_TXID
+curl -X GET https://gateway.wvm.dev/war-calldata/$WVM_TXID
 ```
 Returns
 

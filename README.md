@@ -62,5 +62,13 @@ pub struct HandlerGetCalldata {
 }
 ```
 
+## Benchmarks
+
+### Latency for /calldata
+
+The latency includes the time spent fetching data from WeaveVM RPC and the Arweave gateway, as well as the processing time for Brotli decompression, Borsh deserialization, and data validity verification.
+
+![](./media/256kb.png)
+
 ## License
 This project is licensed under the [MIT License](./LICENSE)

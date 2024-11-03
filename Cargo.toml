@@ -1,6 +1,6 @@
 [package]
 name = "wvm-data-retriever"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "wvm:// data retrieval protocol"
 authors = ["charmful0x <rani@decent.land>"]

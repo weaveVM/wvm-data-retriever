@@ -2,7 +2,7 @@ use anyhow::Error;
 use reqwest::Client;
 use serde_json::Value;
 
-use crate::utils::constants::IRYS_GQL_GATEWAY;
+use crate::utils::constants::{ARWEAVE_GATEWAY_URL, WVM_EXEX_ADDRESS};
 
 async fn send_graphql(gateway: &str, query: Value) -> Result<Value, Error> {
     let client = Client::new();
@@ -25,18 +25,22 @@ pub async fn retrieve_block_from_arweave(block_id: u32) -> String {
         "query": format!(r#"
         query {{
             transactions(
-                order: DESC,
+                sort: HEIGHT_DESC,
                 tags: [
                 {{
                     name: "Protocol",
                     values: ["WeaveVM-ExEx"]
                 }},
                 {{
+                    name: "Network",
+                    values: ["Alphanet v0.2.0"]
+                }},
+                {{
                     name: "Block-Number",
                     values: ["{}"]
                 }}
                 ],
-                owners: ["5JUE58yemNynRDeQDyVECKbGVCQbnX7unPrBRqCPVn5Z"]
+                owners: ["{}"]
             ) {{
                 edges {{
                     node {{
@@ -49,10 +53,10 @@ pub async fn retrieve_block_from_arweave(block_id: u32) -> String {
                 }}
             }}
         }}
-        "#, block_id)
+        "#, block_id, WVM_EXEX_ADDRESS)
     });
 
-    let res = send_graphql(IRYS_GQL_GATEWAY, query).await.unwrap();
+    let res = send_graphql(ARWEAVE_GATEWAY_URL, query).await.unwrap();
     let id = res
         .get("data")
         .and_then(|data| data.get("transactions"))

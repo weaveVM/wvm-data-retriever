@@ -62,6 +62,22 @@ pub struct HandlerGetCalldata {
 }
 ```
 
+## Usage as crate
+
+Add `wvm-data-retriever` to your `Cargo.toml` 
+
+```Cargo.toml
+[dependencies]
+wvm-data-retriever = { git = "https://github.com/weaveVMwvm-data-retriever" }
+```
+
+And in your codebase:
+
+```rust
+use wvm_data_retriever::utils::getters::{get_calldata, get_war_calldata};
+```
+
+
 ## Benchmarks
 
 ### Latency for /calldata

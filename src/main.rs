@@ -2,7 +2,6 @@ use crate::utils::server_handlers::{
     handle_get_calldata, handle_get_war_calldata, handle_weave_gm,
 };
 use axum::{routing::get, Router};
-
 mod utils;
 
 #[shuttle_runtime::main]

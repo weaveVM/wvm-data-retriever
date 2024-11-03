@@ -68,7 +68,7 @@ Add `wvm-data-retriever` to your `Cargo.toml`
 
 ```Cargo.toml
 [dependencies]
-wvm-data-retriever = { git = "https://github.com/weaveVMwvm-data-retriever" }
+wvm-data-retriever = { git = "https://github.com/weaveVM/wvm-data-retriever" }
 ```
 
 And in your codebase:

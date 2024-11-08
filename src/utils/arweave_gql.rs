@@ -28,12 +28,8 @@ pub async fn retrieve_block_from_arweave(block_id: u32) -> String {
                 sort: HEIGHT_DESC,
                 tags: [
                 {{
-                    name: "Protocol",
-                    values: ["WeaveVM-ExEx"]
-                }},
-                {{
                     name: "Network",
-                    values: ["Alphanet v0.2.0"]
+                    values: ["Alphanet v0.3.0"]
                 }},
                 {{
                     name: "Block-Number",

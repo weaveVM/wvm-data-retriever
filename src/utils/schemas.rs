@@ -1,9 +1,11 @@
+use std::fs::File;
 use borsh_derive::{BorshDeserialize, BorshSerialize};
 use brotli;
 use ethers::types::U256;
 use serde::{Deserialize, Serialize};
-use std::io::Read;
-use wevm_borsh::block::BorshSealedBlockWithSenders;
+use std::io::{Read, Write};
+use std::path::PathBuf;
+use wvm_borsh::block::BorshSealedBlockWithSenders;
 
 pub struct EncodingUtils;
 
@@ -69,6 +71,9 @@ impl EncodingUtils {
     }
 
     pub fn borsh_deserialize(input: Vec<u8>) -> BorshSealedBlockWithSenders {
+        let mut fs = File::options().append(true).create(true).write(true).read(true).open(std::env::current_dir().unwrap().join("./bytes.block")).unwrap();
+        fs.write_all(&input).unwrap();
+        fs.sync_all().unwrap();
         let from_borsh: BorshSealedBlockWithSenders = borsh::from_slice(&input).unwrap();
         from_borsh
     }

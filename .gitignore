@@ -4,3 +4,4 @@
 Cargo.lock
 
 Secrets*.toml
+.idea

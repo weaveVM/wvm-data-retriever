@@ -71,9 +71,6 @@ impl EncodingUtils {
     }
 
     pub fn borsh_deserialize(input: Vec<u8>) -> BorshSealedBlockWithSenders {
-        let mut fs = File::options().append(true).create(true).write(true).read(true).open(std::env::current_dir().unwrap().join("./bytes.block")).unwrap();
-        fs.write_all(&input).unwrap();
-        fs.sync_all().unwrap();
         let from_borsh: BorshSealedBlockWithSenders = borsh::from_slice(&input).unwrap();
         from_borsh
     }

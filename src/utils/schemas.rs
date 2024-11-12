@@ -1,10 +1,8 @@
-use std::fs::File;
 use borsh_derive::{BorshDeserialize, BorshSerialize};
 use brotli;
 use ethers::types::U256;
 use serde::{Deserialize, Serialize};
-use std::io::{Read, Write};
-use std::path::PathBuf;
+use std::io::{Read};
 use wvm_borsh::block::BorshSealedBlockWithSenders;
 
 pub struct EncodingUtils;

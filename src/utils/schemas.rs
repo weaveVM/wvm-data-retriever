@@ -2,8 +2,8 @@ use borsh_derive::{BorshDeserialize, BorshSerialize};
 use brotli;
 use ethers::types::U256;
 use serde::{Deserialize, Serialize};
-use std::io::Read;
-use wevm_borsh::block::BorshSealedBlockWithSenders;
+use std::io::{Read};
+use wvm_borsh::block::BorshSealedBlockWithSenders;
 
 pub struct EncodingUtils;
 

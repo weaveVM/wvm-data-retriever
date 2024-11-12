@@ -24,4 +24,4 @@ serde_json = "1.0.127"
 shuttle-axum = "0.47.0"
 shuttle-runtime = "0.47.0"
 tokio = {version = "1.40.0", features = ["full"] }
-wevm-borsh = { git = "https://github.com/weaveVM/wvm-reth", branch = "dev" }
+wvm-borsh = { git = "https://github.com/weaveVM/wvm-reth", branch = "dev" }

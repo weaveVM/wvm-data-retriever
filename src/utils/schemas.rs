@@ -17,8 +17,7 @@ pub struct GetBlockFromTx {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct HandlerGetCalldata {
-    pub calldata_from_ar: String,
-    pub calldata_from_wvm: String,
+    pub calldata: String,
     pub arweave_block_hash: String,
     pub wvm_block_hash: String,
     pub war_decoded_calldata: Option<String>,
@@ -39,8 +38,7 @@ impl GetBlockFromTx {
 
 impl HandlerGetCalldata {
     pub fn new(
-        calldata_from_ar: String,
-        calldata_from_wvm: String,
+        calldata: String,
         arweave_block_hash: String,
         wvm_block_hash: String,
         war_decoded_calldata: Option<String>,
@@ -49,8 +47,7 @@ impl HandlerGetCalldata {
         da_archive_is_equal_data: bool,
     ) -> HandlerGetCalldata {
         HandlerGetCalldata {
-            calldata_from_ar,
-            calldata_from_wvm,
+            calldata,
             arweave_block_hash,
             wvm_block_hash,
             war_decoded_calldata,

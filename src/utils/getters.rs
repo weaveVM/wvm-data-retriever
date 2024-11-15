@@ -18,9 +18,9 @@ pub async fn get_calldata(txid: String) -> Json<Value> {
     let ar_data_archive = from_arweave_calldata_of_txid != "0x";
     let da_archive_is_equal_data =
         from_arweave_calldata_of_txid == from_wvm_calldata_of_txid && wvm_data_da;
+    let calldata = handle_calldata(from_arweave_calldata_of_txid, from_wvm_calldata_of_txid);
     let res_object = HandlerGetCalldata::new(
-        from_arweave_calldata_of_txid,
-        from_wvm_calldata_of_txid,
+        calldata,
         arweave_block_hash_of_txid,
         wvm_block_of_txid.hash,
         Some(String::from("")),
@@ -49,9 +49,9 @@ pub async fn get_war_calldata(txid: String) -> Json<Value> {
         decode_calldata_to_wvm_archiver(&from_arweave_calldata_of_txid).await;
     let raw_war_calldata_json = serde_json::to_value(&raw_war_calldata_struct).unwrap();
     let raw_war_calldata = serde_json::to_string(&raw_war_calldata_json).unwrap();
+    let calldata = handle_calldata(from_arweave_calldata_of_txid, from_wvm_calldata_of_txid);
     let res_object = HandlerGetCalldata::new(
-        from_arweave_calldata_of_txid.clone(),
-        from_arweave_calldata_of_txid,
+        calldata,
         arweave_block_hash_of_txid,
         wvm_block_of_txid.hash,
         raw_war_calldata.into(),
@@ -63,4 +63,13 @@ pub async fn get_war_calldata(txid: String) -> Json<Value> {
     let res = serde_json::to_value(res_object).unwrap();
 
     Json(res)
+}
+
+fn handle_calldata(ar_calldata: String, wvm_calldata: String) -> String {
+    if ar_calldata == "0x" {
+        // fallback to wvm calldata
+         wvm_calldata
+    } else {
+        ar_calldata
+    }
 }

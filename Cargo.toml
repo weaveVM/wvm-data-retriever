@@ -1,6 +1,6 @@
 [package]
 name = "wvm-data-retriever"
-version = "0.1.1"
+version = "0.2.0"
 edition = "2021"
 description = "wvm:// data retrieval protocol"
 authors = ["charmful0x <rani@decent.land>"]
@@ -16,6 +16,7 @@ axum = "0.7.5"
 borsh = "1.5.1"
 borsh-derive = "1.5.1"
 brotli = "6.0.0"
+bytes = "1.8.0"
 ethers = "2.0.14"
 ethers-providers = "2.0.14"
 reqwest = {version = "0.12.7", features = ["json"]}

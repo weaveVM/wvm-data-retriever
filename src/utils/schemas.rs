@@ -1,8 +1,9 @@
+use axum::Error;
 use borsh_derive::{BorshDeserialize, BorshSerialize};
-use brotli;
+use brotli::{self, Decompressor};
 use ethers::types::U256;
 use serde::{Deserialize, Serialize};
-use std::io::{Read};
+use std::io::Read;
 use wvm_borsh::block::BorshSealedBlockWithSenders;
 
 pub struct EncodingUtils;
@@ -16,7 +17,8 @@ pub struct GetBlockFromTx {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct HandlerGetCalldata {
-    pub calldata: String,
+    pub calldata_from_ar: String,
+    pub calldata_from_wvm: String,
     pub arweave_block_hash: String,
     pub wvm_block_hash: String,
     pub war_decoded_calldata: Option<String>,
@@ -37,7 +39,8 @@ impl GetBlockFromTx {
 
 impl HandlerGetCalldata {
     pub fn new(
-        calldata: String,
+        calldata_from_ar: String,
+        calldata_from_wvm: String,
         arweave_block_hash: String,
         wvm_block_hash: String,
         war_decoded_calldata: Option<String>,
@@ -46,7 +49,8 @@ impl HandlerGetCalldata {
         da_archive_is_equal_data: bool,
     ) -> HandlerGetCalldata {
         HandlerGetCalldata {
-            calldata,
+            calldata_from_ar,
+            calldata_from_wvm,
             arweave_block_hash,
             wvm_block_hash,
             war_decoded_calldata,
@@ -58,14 +62,14 @@ impl HandlerGetCalldata {
 }
 
 impl EncodingUtils {
-    pub fn brotli_decompress(input: Vec<u8>) -> Vec<u8> {
+    pub fn brotli_decompress(input: Vec<u8>) -> Result<Vec<u8>, Error> {
         let mut decompressed_data = Vec::new();
         let mut decompressor = brotli::Decompressor::new(input.as_slice(), 4096); // 4096 is the buffer size
 
-        decompressor
-            .read_to_end(&mut decompressed_data)
-            .expect("Decompression failed");
-        decompressed_data
+        match decompressor.read_to_end(&mut decompressed_data) {
+            Ok(_) => Ok(decompressed_data),
+            Err(_) => Ok(Vec::new()),
+        }
     }
 
     pub fn borsh_deserialize(input: Vec<u8>) -> BorshSealedBlockWithSenders {

@@ -29,7 +29,7 @@ cargo shuttle run
 curl -X GET https://gateway.wvm.dev/calldata/$WVM_TXID
 ```
 
-Returns
+Returns the res in the format as in below. Incase the calldata settled on WeaveVM isn't Borsh-Brotli encoded, the Arweave DA verification is omitted as per the current release.
 
 ```rs
 pub struct HandlerGetCalldata {

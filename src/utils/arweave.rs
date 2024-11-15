@@ -10,17 +10,19 @@ pub async fn get_tx_calldata_from_arweave(
     let req = reqwest::get(req).await;
 
     let data = match req {
-        Ok(res) => if res.status().is_success() {
-            res.bytes().await.unwrap_or(bytes::Bytes::new())
-        } else {
-            bytes::Bytes::new()
-        },
-        Err(_) => bytes::Bytes::new()
+        Ok(res) => {
+            if res.status().is_success() {
+                res.bytes().await.unwrap_or(bytes::Bytes::new())
+            } else {
+                bytes::Bytes::new()
+            }
+        }
+        Err(_) => bytes::Bytes::new(),
     };
 
     let unbrotli = EncodingUtils::brotli_decompress(data.to_vec()).unwrap_or(vec![]);
     if unbrotli.is_empty() {
-        return Ok(String::from("0x"))
+        return Ok(String::from("0x"));
     }
     let unborsh = EncodingUtils::borsh_deserialize(unbrotli);
     let str_block = Block::from(unborsh);

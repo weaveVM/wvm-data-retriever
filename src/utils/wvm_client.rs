@@ -26,6 +26,7 @@ pub async fn retrieve_wvm_block_ref_from_txid(txid: &str) -> GetBlockFromTx {
 pub async fn decode_calldata_to_wvm_archiver(calldata: &String) -> WeaveVMArchiverBlock {
     let byte_array = hex::decode(calldata.trim_start_matches("0x")).expect("decoding failed");
     let unbrotli = EncodingUtils::brotli_decompress(byte_array);
-    let unborsh: WeaveVMArchiverBlock = EncodingUtils::wvm_archiver_borsh_deserialize(unbrotli.unwrap());
+    let unborsh: WeaveVMArchiverBlock =
+        EncodingUtils::wvm_archiver_borsh_deserialize(unbrotli.unwrap());
     unborsh
 }

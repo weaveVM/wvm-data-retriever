@@ -3,7 +3,7 @@ use borsh_derive::{BorshDeserialize, BorshSerialize};
 use brotli::{self, Decompressor};
 use ethers::types::U256;
 use serde::{Deserialize, Serialize};
-use std::io::{Read};
+use std::io::Read;
 use wvm_borsh::block::BorshSealedBlockWithSenders;
 
 pub struct EncodingUtils;
@@ -68,7 +68,7 @@ impl EncodingUtils {
 
         match decompressor.read_to_end(&mut decompressed_data) {
             Ok(_) => Ok(decompressed_data),
-            Err(_) => Ok(Vec::new())
+            Err(_) => Ok(Vec::new()),
         }
     }
 

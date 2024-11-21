@@ -8,8 +8,8 @@ mod utils;
 async fn main() -> shuttle_axum::ShuttleAxum {
     let router = Router::new()
         .route("/", get(handle_weave_gm))
-        .route("/calldata/:txid", get(handle_get_calldata))
-        .route("/war-calldata/:txid", get(handle_get_war_calldata));
+        .route("/v1/calldata/:txid", get(handle_get_calldata))
+        .route("/v1/war-calldata/:txid", get(handle_get_war_calldata));
 
     Ok(router.into())
 }

@@ -26,7 +26,7 @@ cargo shuttle run
 ### Retrieve calldata associated with an WeaveVM TXID
 
 ```bash
-curl -X GET https://gateway.wvm.dev/calldata/$WVM_TXID
+curl -X GET https://gateway.wvm.dev/v1/calldata/$WVM_TXID
 ```
 
 Returns the res in the format as in below. Incase the calldata settled on WeaveVM isn't Borsh-Brotli encoded, the Arweave DA verification is omitted as per the current release.
@@ -46,7 +46,7 @@ pub struct HandlerGetCalldata {
 ### Retrieve WeaveVM-Archiver JSON decoded calldata
 
 ```bash
-curl -X GET https://gateway.wvm.dev/war-calldata/$WVM_TXID
+curl -X GET https://gateway.wvm.dev/v1/war-calldata/$WVM_TXID
 ```
 Returns
 

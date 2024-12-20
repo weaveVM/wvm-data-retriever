@@ -1,7 +1,6 @@
 /target
 
 .env
-Cargo.lock
 
 Secrets*.toml
 .idea

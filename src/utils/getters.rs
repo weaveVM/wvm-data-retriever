@@ -23,6 +23,7 @@ pub async fn get_calldata(txid: String) -> Json<Value> {
         calldata,
         arweave_block_hash_of_txid,
         wvm_block_of_txid.hash,
+        wvm_block_of_txid.number.as_u32(),
         Some(String::from("")),
         wvm_data_da,
         ar_data_archive,
@@ -54,6 +55,7 @@ pub async fn get_war_calldata(txid: String) -> Json<Value> {
         calldata,
         arweave_block_hash_of_txid,
         wvm_block_of_txid.hash,
+        wvm_block_of_txid.number.as_u32(),
         raw_war_calldata.into(),
         wvm_data_da,
         ar_data_archive,
@@ -68,7 +70,7 @@ pub async fn get_war_calldata(txid: String) -> Json<Value> {
 fn handle_calldata(ar_calldata: String, wvm_calldata: String) -> String {
     if ar_calldata == "0x" {
         // fallback to wvm calldata
-         wvm_calldata
+        wvm_calldata
     } else {
         ar_calldata
     }

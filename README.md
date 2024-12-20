@@ -36,6 +36,7 @@ pub struct HandlerGetCalldata {
     pub calldata: String,
     pub arweave_block_hash: String,
     pub wvm_block_hash: String,
+    pub wvm_block_id: u32,
     pub war_decoded_calldata: Option<String>, // default to Some("")
     pub wvm_data_da: bool,
     pub ar_data_archive: bool,

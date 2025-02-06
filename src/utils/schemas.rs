@@ -2,9 +2,11 @@ use axum::Error;
 use borsh_derive::{BorshDeserialize, BorshSerialize};
 use brotli::{self, Decompressor};
 use ethers::types::U256;
+use reth_primitives::SealedBlockWithSenders;
 use serde::{Deserialize, Serialize};
 use std::io::Read;
 use wvm_borsh::block::BorshSealedBlockWithSenders;
+use wvm_tx::wvm::WvmSealedBlockWithSenders;
 
 pub struct EncodingUtils;
 
@@ -114,33 +116,44 @@ pub struct Block {
 impl From<BorshSealedBlockWithSenders> for Block {
     fn from(value: BorshSealedBlockWithSenders) -> Self {
         let sealed_block = value.0;
-        Block {
-            base_fee_per_gas: sealed_block.base_fee_per_gas.map(|i| i.to_string()),
-            blob_gas_used: sealed_block.blob_gas_used.map(|i| i.to_string()),
-            difficulty: Some(sealed_block.difficulty.to_string()),
-            excess_blob_gas: sealed_block.excess_blob_gas.map(|i| i.to_string()),
-            extra_data: Some(sealed_block.extra_data.to_string()),
-            gas_limit: Some(sealed_block.gas_limit.to_string()),
-            gas_used: Some(sealed_block.gas_used.to_string()),
-            hash: Some(sealed_block.hash().to_string()),
-            logs_bloom: Some(sealed_block.logs_bloom.to_string()),
-            miner: None,
-            mix_hash: Some(sealed_block.mix_hash.to_string()),
-            nonce: Some(sealed_block.nonce.to_string()),
-            number: Some(sealed_block.number.to_string()),
-            parent_beacon_block_root: sealed_block.parent_beacon_block_root.map(|i| i.to_string()),
-            parent_hash: Some(sealed_block.parent_hash.to_string()),
-            receipts_root: Some(sealed_block.receipts_root.to_string()),
-            seal_fields: vec![],
-            sha3_uncles: None,
-            size: Some(sealed_block.size().to_string()),
-            state_root: Some(sealed_block.state_root.to_string()),
-            timestamp: Some(sealed_block.timestamp.to_string()),
-            total_difficulty: None,
-            transactions_and_calldata: sealed_block
-                .transactions()
-                .map(|i| (i.hash.to_string(), i.transaction.input().to_string()))
-                .collect::<Vec<(String, String)>>(),
+
+        match sealed_block {
+            WvmSealedBlockWithSenders::V1(data) => {
+                let data: SealedBlockWithSenders = data.into();
+                let sealed_block = data.block;
+                Block {
+                    base_fee_per_gas: sealed_block.base_fee_per_gas.map(|i| i.to_string()),
+                    blob_gas_used: sealed_block.blob_gas_used.map(|i| i.to_string()),
+                    difficulty: Some(sealed_block.difficulty.to_string()),
+                    excess_blob_gas: sealed_block.excess_blob_gas.map(|i| i.to_string()),
+                    extra_data: Some(sealed_block.extra_data.to_string()),
+                    gas_limit: Some(sealed_block.gas_limit.to_string()),
+                    gas_used: Some(sealed_block.gas_used.to_string()),
+                    hash: Some(sealed_block.hash().to_string()),
+                    logs_bloom: Some(sealed_block.logs_bloom.to_string()),
+                    miner: None,
+                    mix_hash: Some(sealed_block.mix_hash.to_string()),
+                    nonce: Some(sealed_block.nonce.to_string()),
+                    number: Some(sealed_block.number.to_string()),
+                    parent_beacon_block_root: sealed_block
+                        .parent_beacon_block_root
+                        .map(|i| i.to_string()),
+                    parent_hash: Some(sealed_block.parent_hash.to_string()),
+                    receipts_root: Some(sealed_block.receipts_root.to_string()),
+                    seal_fields: vec![],
+                    sha3_uncles: None,
+                    size: Some(sealed_block.size().to_string()),
+                    state_root: Some(sealed_block.state_root.to_string()),
+                    timestamp: Some(sealed_block.timestamp.to_string()),
+                    total_difficulty: None,
+                    transactions_and_calldata: sealed_block
+                        .body
+                        .transactions()
+                        .map(|i| (i.hash.to_string(), i.transaction.input().to_string()))
+                        .collect::<Vec<(String, String)>>(),
+                }
+            }
+            _ => unimplemented!(),
         }
     }
 }

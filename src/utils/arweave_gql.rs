@@ -28,15 +28,10 @@ pub async fn retrieve_block_from_arweave(block_id: u32) -> String {
                 sort: HEIGHT_DESC,
                 tags: [
                 {{
-                    name: "Network",
-                    values: ["Alphanet v0.3.0"]
-                }},
-                {{
                     name: "Block-Number",
                     values: ["{}"]
                 }}
                 ],
-                owners: ["{}"]
             ) {{
                 edges {{
                     node {{
@@ -45,23 +40,49 @@ pub async fn retrieve_block_from_arweave(block_id: u32) -> String {
                             name
                             value
                         }}
+                        owner {{
+                            address
+                        }}
                     }}
                 }}
             }}
         }}
-        "#, block_id, WVM_EXEX_ADDRESS)
+        "#, block_id)
     });
 
     let res = send_graphql(ARWEAVE_GATEWAY_URL, query).await.unwrap();
-    let id = res
+    let transactions = res
         .get("data")
         .and_then(|data| data.get("transactions"))
-        .and_then(|transactions| transactions.get("edges"))
-        .and_then(|edges| edges.get(0))
-        .and_then(|first_edge| first_edge.get("node"))
-        .and_then(|node| node.get("id"))
-        .and_then(|id| id.as_str())
-        .unwrap_or("No TXID found");
+        .and_then(|edges| edges.get("edges"))
+        .and_then(|e| e.as_array())
+        .unwrap();
 
-    id.into()
+    let mut id = String::from("TXID Not Found");
+
+    for tx in transactions {
+        if let Some(node) = tx.get("node") {
+            let owner = node
+                .get("owner")
+                .and_then(|address| address.get("address"))
+                .and_then(|owner| owner.as_str())
+                .unwrap();
+
+            if (owner == WVM_EXEX_ADDRESS) {
+                if let Some(tags) = node.get("tags").and_then(|t| t.as_array()) {
+                    for tag in tags {
+                        println!("{:#?}", &tag);
+                        if tag.get("name").and_then(|n| n.as_str()) == Some("Network")
+                            && tag.get("value").and_then(|v| v.as_str()) == Some("Alphanet v0.3.1")
+                        {
+                            id = node.get("id").unwrap().as_str().unwrap().to_string();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    println!("{:?}", id);
+    return id;
 }

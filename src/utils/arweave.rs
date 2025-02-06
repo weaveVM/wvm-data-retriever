@@ -24,7 +24,11 @@ pub async fn get_tx_calldata_from_arweave(
     if unbrotli.is_empty() {
         return Ok(String::from("0x"));
     }
-    let unborsh = EncodingUtils::borsh_deserialize(unbrotli);
+    let unborsh = match EncodingUtils::borsh_deserialize(unbrotli) {
+        Ok(data) => data,
+        Err(_) => return Ok("0x".to_string())
+    };
+    //     println!("{:?}", unborsh.0);
     let str_block = Block::from(unborsh);
     let block_txs = str_block.transactions_and_calldata.to_vec();
     let wvm_txid = wvm_txid.trim().to_lowercase(); // Normalize txid for comparison

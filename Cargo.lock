@@ -5756,6 +5756,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "op-alloy-rpc-types"
+version = "0.5.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "94bae9bf91b620e1e2c2291562e5998bc1247bd8ada011773e1997b31a95de99"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-network-primitives",
+ "alloy-primitives",
+ "alloy-rpc-types-eth",
+ "alloy-serde",
+ "op-alloy-consensus",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "op-alloy-rpc-types-engine"
 version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -8762,6 +8779,7 @@ dependencies = [
  "alloy-eips",
  "alloy-primitives",
  "alloy-rlp",
+ "alloy-rpc-types",
  "alloy-serde",
  "bytes",
  "c-kzg",
@@ -8770,6 +8788,7 @@ dependencies = [
  "modular-bitfield",
  "once_cell",
  "op-alloy-consensus",
+ "op-alloy-rpc-types",
  "rayon",
  "reth-codecs",
  "reth-ethereum-forks",
@@ -12568,12 +12587,14 @@ dependencies = [
  "ethers",
  "ethers-providers",
  "reqwest 0.12.12",
+ "reth-primitives",
  "serde",
  "serde_json",
  "shuttle-axum",
  "shuttle-runtime",
  "tokio",
  "wvm-borsh",
+ "wvm-tx",
 ]
 
 [[package]]

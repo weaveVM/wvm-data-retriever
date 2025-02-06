@@ -26,3 +26,5 @@ shuttle-axum = "0.50.0"
 shuttle-runtime = "0.50.0"
 tokio = { version = "1.40.0", features = ["full"] }
 wvm-borsh = { git = "https://github.com/weaveVM/wvm-reth", tag = "deps-fix" }
+wvm-tx = { git = "https://github.com/weaveVM/wvm-reth", tag = "deps-fix" }
+reth-primitives = { git = "https://github.com/weaveVM/wvm-reth", tag = "deps-fix" }

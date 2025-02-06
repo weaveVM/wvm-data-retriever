@@ -74,9 +74,9 @@ impl EncodingUtils {
         }
     }
 
-    pub fn borsh_deserialize(input: Vec<u8>) -> BorshSealedBlockWithSenders {
-        let from_borsh: BorshSealedBlockWithSenders = borsh::from_slice(&input).unwrap();
-        from_borsh
+    pub fn borsh_deserialize(input: Vec<u8>) -> Result<BorshSealedBlockWithSenders, anyhow::Error> {
+        let from_borsh: BorshSealedBlockWithSenders = borsh::from_slice(&input)?;
+        Ok(from_borsh)
     }
 
     pub fn wvm_archiver_borsh_deserialize(input: Vec<u8>) -> WeaveVMArchiverBlock {

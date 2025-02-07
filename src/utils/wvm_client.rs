@@ -56,14 +56,15 @@ where
     }
 }
 
-pub async fn retrieve_wvm_block_ref_from_txtag(tag: [String; 2]) -> GetBlockFromTx {
+pub async fn retrieve_wvm_block_ref_from_txtag(tag: [String; 2]) -> (GetBlockFromTx, String) {
     let provider =
         Provider::<Http>::try_from(WVM_RPC_URL).expect("could not instantiate HTTP Provider");
 
-    retrieve_txtag(&provider, tag).await
+    let (block_data, tx_hash) = retrieve_txtag(&provider, tag).await;
+    (block_data, tx_hash)
 }
 
-async fn retrieve_txtag<P>(provider: &P, tag: [String; 2]) -> GetBlockFromTx
+async fn retrieve_txtag<P>(provider: &P, tag: [String; 2]) -> (GetBlockFromTx, String)
 where
     P: WvmJsonRpc + 'static,
 {
@@ -74,8 +75,14 @@ where
     let block_number_hex: &str = tx_json["blockNumber"].as_str().unwrap_or("0x");
     let block_number_dec = U256::from_str(block_number_hex).unwrap_or(U256::zero());
     let calldata: &str = tx_json["input"].as_str().unwrap_or("0x");
+    // Convert the H256 to the full hex string:
+    let raw_tx = tx.unwrap();
+    let full_tx_hash_str = format!("0x{}", hex::encode(raw_tx.hash.as_bytes()));
 
-    GetBlockFromTx::new(block_number_dec, block_hash.into(), calldata.into())
+    (
+        GetBlockFromTx::new(block_number_dec, block_hash.into(), calldata.into()),
+        full_tx_hash_str,
+    )
 }
 
 async fn get_wvm_transaction_by_tag<P>(
@@ -146,7 +153,7 @@ mod tests {
     }
     #[tokio::test]
     async fn test_retrieve_txtag_with_mock() {
-        let raw_tx_hex = "0x02f8768301b4a101843b9aca008477359400832dc6c094976ea74026e726554db657fa54763abd0c3a0aa988016345785d8a000080c001a07ca9e6ab9c6b14cd280a7b45e7d41f43d910210bcfe4b1ad5765c035549d1e02a0023813086c7e5ff15e793299547bf41e278548148d3b61e9f65bebe938f80492";
+        let raw_tx_hex = "0x02f8768301b4a103843b9aca008477359400832dc6c094976ea74026e726554db657fa54763abd0c3a0aa988016345785d8a000080c001a0868fae4ba090629d828ab1838896280fc3325e8b0502451b028e0ca019c5b408a07a450c2e3533e16fcd55cded2afde7b37a700cdcc19697c31f43e85c2ebeb160";
         let raw_tx_bytes =
             hex::decode(raw_tx_hex.trim_start_matches("0x")).expect("Could not decode hex string");
 
@@ -156,8 +163,12 @@ mod tests {
 
         let tag = ["testtag1".to_string(), "testtag2".to_string()];
 
-        let block_ref = super::retrieve_txtag(&mock_provider, tag).await;
+        let (block_ref, txid) = super::retrieve_txtag(&mock_provider, tag).await;
 
+        assert_eq!(
+            txid,
+            "0xb97c966f2d5f675c6fdc632c1bcb9056bdeb3c24aaeabe54ac0b728200a47f8a",
+        );
         assert_eq!(block_ref.hash, "0x", "Expected default blockHash");
         assert_eq!(
             block_ref.number,

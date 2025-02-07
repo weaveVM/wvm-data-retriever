@@ -38,15 +38,11 @@ struct GetWvmTransactionByTagRequest {
 }
 
 use axum::async_trait;
-/// This trait is still useful if you want to mock in tests, but if you genuinely have
-/// no external client, you can also remove it and call the provider methods directly.
 #[async_trait]
 pub trait WvmJsonRpc {
-    /// Returns the raw transaction bytes if found, or `None` if no matching transaction.
     async fn get_wvm_transaction_by_tag(&self, tag: [String; 2]) -> Option<Bytes>;
 }
 
-/// Implementation of the trait for a regular ethers `Provider`.
 #[async_trait]
 impl<P> WvmJsonRpc for Provider<P>
 where
@@ -54,8 +50,6 @@ where
 {
     async fn get_wvm_transaction_by_tag(&self, tag: [String; 2]) -> Option<Bytes> {
         let req = GetWvmTransactionByTagRequest { tag };
-        // Keep “dumb” error handling: we just .expect() on RPC.
-        // In real code, you might want to propagate errors instead.
         self.request("eth_getWvmTransactionByTag", (req,))
             .await
             .expect("RPC failed")
@@ -63,7 +57,6 @@ where
 }
 
 pub async fn retrieve_wvm_block_ref_from_txtag(tag: [String; 2]) -> GetBlockFromTx {
-    // Create a provider instance.
     let provider =
         Provider::<Http>::try_from(WVM_RPC_URL).expect("could not instantiate HTTP Provider");
 
@@ -85,7 +78,6 @@ where
     GetBlockFromTx::new(block_number_dec, block_hash.into(), calldata.into())
 }
 
-/// Retrieves the raw transaction from the custom RPC, then decodes it via RLP.
 async fn get_wvm_transaction_by_tag<P>(
     provider_extended: &P,
     tag: [String; 2],
@@ -106,6 +98,35 @@ where
 
 #[cfg(test)]
 mod tests {
+    // ------------------------------------------------------------
+    // From your recent node script (send-wvm.mjs):
+    //
+    // Account balance: 999999.6979467906475 ETH
+    // Current baseFee: 7n
+    // Transaction data: {
+    //   from: '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc',
+    //   to: '0x976EA74026E726554dB657fA54763abd0C3a0aa9',
+    //   gas: '0x2DC6C0',
+    //   maxFeePerGas: '0x77359400',
+    //   maxPriorityFeePerGas: '0x3b9aca00',
+    //   value: '0x16345785d8a0000',
+    //   chainId: 111777,
+    //   nonce: 3n,
+    //   type: 2
+    // }
+    // Raw transaction:
+    //   0x02f8768301b4a103843b9aca008477359400832dc6c094976ea74026e726554db657fa54763abd0c3a0aa988016345785d8a000080c001a0868fae4ba090629d828ab1838896280fc3325e8b0502451b028e0ca019c5b408a07a450c2e3533e16fcd55cded2afde7b37a700cdcc19697c31f43e85c2ebeb160
+    // Transaction response: {
+    //   jsonrpc: '2.0',
+    //   id: 1,
+    //   result: '0xb97c966f2d5f675c6fdc632c1bcb9056bdeb3c24aaeabe54ac0b728200a47f8a'
+    // }
+    //
+    // Note: The raw RLP data does not include blockHash or blockNumber.
+    // They are determined by the node when the transaction is mined.
+    // This is why blockHash and blockNumber typically default to "0x"/0
+    // if you’re just decoding the RLP or if the tx is pending.
+    // ------------------------------------------------------------
     use crate::utils::wvm_client::Bytes;
     use crate::utils::wvm_client::WvmJsonRpc;
     use ethers::types::{Address, Signature, Transaction, H256, U256};
@@ -114,33 +135,27 @@ mod tests {
 
     #[derive(Default)]
     struct MockWvmProvider {
-        /// We store what the mock should return when `get_wvm_transaction_by_tag` is called.
         pub response: Option<Bytes>,
     }
 
     #[axum::async_trait]
     impl WvmJsonRpc for MockWvmProvider {
         async fn get_wvm_transaction_by_tag(&self, _tag: [String; 2]) -> Option<Bytes> {
-            // Just return whatever we set in `self.response`.
             self.response.clone()
         }
     }
     #[tokio::test]
     async fn test_retrieve_txtag_with_mock() {
-        // 1. Prepare raw transaction bytes
         let raw_tx_hex = "0x02f8768301b4a101843b9aca008477359400832dc6c094976ea74026e726554db657fa54763abd0c3a0aa988016345785d8a000080c001a07ca9e6ab9c6b14cd280a7b45e7d41f43d910210bcfe4b1ad5765c035549d1e02a0023813086c7e5ff15e793299547bf41e278548148d3b61e9f65bebe938f80492";
         let raw_tx_bytes =
             hex::decode(raw_tx_hex.trim_start_matches("0x")).expect("Could not decode hex string");
 
-        // 2. Create a mock provider that will return those bytes
         let mock_provider = MockWvmProvider {
             response: Some(Bytes::from(raw_tx_bytes)),
         };
 
-        // 3. Create some tag input
         let tag = ["testtag1".to_string(), "testtag2".to_string()];
 
-        // 4. Call the private function `retrieve_txtag` (as it's in `super`, you can do:
         let block_ref = super::retrieve_txtag(&mock_provider, tag).await;
 
         assert_eq!(block_ref.hash, "0x", "Expected default blockHash");
@@ -168,19 +183,15 @@ mod tests {
         );
         stream.append(&tx.max_fee_per_gas.expect("Missing max fee per gas"));
         stream.append(&tx.gas);
-        // Append "to" address (or empty data if None).
         match tx.to {
             Some(ref addr) => stream.append(addr),
             None => stream.append_empty_data(),
         };
         stream.append(&tx.value);
-        // Append input data (the transaction payload).
         stream.append(&tx.input.0);
-        // Append access list (we assume empty).
         stream.begin_list(0);
         let encoded = stream.out();
 
-        // Prepend the transaction type byte (0x02) for EIP-1559.
         let mut sighash_data = Vec::with_capacity(1 + encoded.len());
         sighash_data.push(0x02);
         sighash_data.extend_from_slice(&encoded);
@@ -200,15 +211,10 @@ mod tests {
 
         println!("Decoded transaction: {:#?}", tx);
 
-        // --- Assertions based on the original transaction data ---
-
-        // 1. Chain ID should be 111777.
         assert_eq!(tx.chain_id, Some(U256::from(111777)), "Chain ID mismatch");
 
-        // 2. Nonce should be 1.
         assert_eq!(tx.nonce, U256::from(3), "Nonce mismatch");
 
-        // 3. The 'to' address should match.
         let expected_to: Address = "0x976ea74026e726554db657fa54763abd0c3a0aa9"
             .parse()
             .expect("Invalid 'to' address");
@@ -218,22 +224,18 @@ mod tests {
             "'To' address mismatch"
         );
 
-        // 4. Value should be 0x16345785d8a0000 which is 100000000000000000 (0.1 ETH).
         let expected_value =
             U256::from_dec_str("100000000000000000").expect("Invalid expected value");
         assert_eq!(tx.value, expected_value, "Value mismatch");
 
-        // 5. Gas limit should be 3000000 (0x2DC6C0).
         assert_eq!(tx.gas, U256::from(3000000), "Gas limit mismatch");
 
-        // 6. Max fee per gas should be 2000000000 (0x77359400).
         assert_eq!(
             tx.max_fee_per_gas.expect("Missing max fee per gas"),
             U256::from(2000000000u64),
             "Max fee per gas mismatch"
         );
 
-        // 7. Max priority fee per gas should be 1000000000 (0x3b9aca00).
         assert_eq!(
             tx.max_priority_fee_per_gas
                 .expect("Missing max priority fee per gas"),
@@ -241,16 +243,12 @@ mod tests {
             "Max priority fee per gas mismatch"
         );
 
-        // 8. Recover and verify the sender ("from") address.
         let expected_from: Address = "0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc"
             .parse()
             .expect("Invalid sender address");
 
-        // Compute the sighash using our helper function.
         let sighash = sighash_eip1559(&tx);
 
-        // Build the signature from the transaction's signature components.
-        // (Note: For EIP-1559, the `v` value is stored as a U256; we convert it to u64.)
         let v = tx.v.low_u64();
         let signature = Signature {
             r: tx.r,
@@ -258,7 +256,6 @@ mod tests {
             v,
         };
 
-        // Recover the sender address using the signature and computed sighash.
         let recovered_from = signature
             .recover(sighash)
             .expect("Failed to recover sender");

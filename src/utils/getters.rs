@@ -9,7 +9,7 @@ pub async fn get_calldata(txid: String) -> Json<Value> {
     let wvm_block_of_txid = retrieve_wvm_block_ref_from_txid(&txid).await;
     let from_wvm_calldata_of_txid = wvm_block_of_txid.calldata;
     let arweave_block_hash_of_txid =
-        retrieve_block_from_arweave(wvm_block_of_txid.number.as_u32()).await;
+        retrieve_block_from_arweave(wvm_block_of_txid.number.as_u32()).await.unwrap_or_default();
     let from_arweave_calldata_of_txid =
         get_tx_calldata_from_arweave(arweave_block_hash_of_txid.as_str(), txid)
             .await
@@ -37,7 +37,7 @@ pub async fn get_war_calldata(txid: String) -> Json<Value> {
     let wvm_block_of_txid = retrieve_wvm_block_ref_from_txid(&txid).await;
     let from_wvm_calldata_of_txid = wvm_block_of_txid.calldata;
     let arweave_block_hash_of_txid =
-        retrieve_block_from_arweave(wvm_block_of_txid.number.as_u32()).await;
+        retrieve_block_from_arweave(wvm_block_of_txid.number.as_u32()).await.unwrap_or_default();
     let from_arweave_calldata_of_txid =
         get_tx_calldata_from_arweave(arweave_block_hash_of_txid.as_str(), txid)
             .await
@@ -72,7 +72,7 @@ pub async fn get_calldata_by_tag(tag: [String; 2]) -> Json<Value> {
         crate::utils::wvm_client::retrieve_wvm_block_ref_from_txtag(tag).await;
     let from_wvm_calldata_of_txid = wvm_block_of_tag.calldata;
     let arweave_block_hash_of_txid =
-        retrieve_block_from_arweave(wvm_block_of_tag.number.as_u32()).await;
+        retrieve_block_from_arweave(wvm_block_of_tag.number.as_u32()).await.unwrap_or_default();
     let from_arweave_calldata_of_txid =
         get_tx_calldata_from_arweave(arweave_block_hash_of_txid.as_str(), txid)
             .await
